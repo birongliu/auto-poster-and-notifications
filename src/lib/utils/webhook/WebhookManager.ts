@@ -1,6 +1,6 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v10";
-import { Types, Webhook, AutoPoster } from "@lib"
+import { Types, Webhook, AutoPoster, Embed, Utils } from "@lib"
 import { container } from "tsyringe"
 
 export class WebhookManager {
@@ -25,10 +25,11 @@ export class WebhookManager {
       return this.webhook = webhook;
    }
 
-   public async send(content: string) {
+   public async send(content: Embed[] | Embed | string) {
       const webhook = await this.get();
+      const body = content instanceof Embed ? { embeds: Utils.toArray(content, 10) } : { content }
       return this.rest.post(Routes.webhook(webhook.id, webhook.token), {
-         body: { content },
+         body,
         reason: "Send auto poster messages",
       })
    }
