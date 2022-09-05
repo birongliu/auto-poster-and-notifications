@@ -29,8 +29,7 @@ export class WebhookManager {
       const webhook = await this.get();
       const body = content instanceof Embed ? { embeds: Utils.toArray(content, 10) } : { content }
       return this.rest.post(Routes.webhook(webhook.id, webhook.token), {
-         body,
-        reason: "Send auto poster messages",
+         body, reason: "Send auto poster messages",
       })
    }
 
@@ -41,8 +40,8 @@ export class WebhookManager {
       }) as Types.WebhookOptions;
 
       const webhook = new Webhook(options);
-      this.manager.options.webhookId = options.id;
       this.store.set(webhook.id, webhook);
+      this.webhook = webhook;
       return webhook;
    }
 

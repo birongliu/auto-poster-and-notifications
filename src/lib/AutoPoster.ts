@@ -1,4 +1,4 @@
-import { Types, WebhookManager, BaseService, Schedule } from "@lib";
+import { Types, WebhookManager, BaseService, Schedule } from ".";
 
 export class AutoPoster {
    private ready: boolean = false;
