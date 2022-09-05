@@ -1,0 +1,37 @@
+{
+  "name": "auto-poster-and-notifications",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "_moduleAliases": {
+    "@lib": "dist/lib/index.js"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts"
+  },
+  "scripts": {
+    "test": "node tests/test.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Egglord-Discord-Bot/auto-poster-and-notifications.git"
+  },
+  "author": "GoldenCredit",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Egglord-Discord-Bot/auto-poster-and-notifications/issues"
+  },
+  "homepage": "https://github.com/Egglord-Discord-Bot/auto-poster-and-notifications#readme",
+  "dependencies": {
+    "@discordjs/rest": "^1.1.0",
+    "@types/node": "^18.7.14",
+    "discord-api-types": "^0.37.5",
+    "module-alias": "^2.2.2",
+    "reflect-metadata": "^0.1.13",
+    "rss-parser": "^3.12.0",
+    "tsyringe": "^4.7.0",
+    "typeorm": "^0.3.9",
+    "undici": "^5.10.0"
+  }
+}
