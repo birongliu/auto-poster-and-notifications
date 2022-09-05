@@ -1,5 +1,5 @@
 import RSS from "rss-parser";
-import { Utils } from "@lib";
+import { Embed, Utils } from "@lib";
 import { BaseService } from "./BaseService";
 
 interface YoutubeRecord { shouldUpdate: boolean, result: YoutubeData }
@@ -21,22 +21,17 @@ export class Youtube extends BaseService {
       const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${this.channelId}`;
       const context = await new RSS().parseURL(feedUrl) as unknown as YoutubeRawData;
       const resolve = this.resolveData(context);
-      if(resolve.shouldUpdate) return await this.webhook.send(`[${resolve.result.title}](${resolve.result.url})`);
+      if(resolve.shouldUpdate) return this.webhook.send(`[${resolve.result.title}](${resolve.result.url})`)
    }
 
-   private resolveData(data: YoutubeRawData): YoutubeRecord {
-      const results: YoutubeData[] = [];
-      Object.assign({}, ...data.items.map(item => {
-         const resolve = {
-            channel: data.link,
-            title: item.title,
-            author: item.author, 
-            id: item.id,
-            isNew: Utils.validateTime(new Date(item.pubDate), new Date()),
-            url: item.link,
-            createdAt: new Date(item.pubDate),
-         }
-         results.push(resolve) 
+   private resolveData(data: YoutubeRawData): YoutubeRecord {  
+      const results = data.items.map(youtube => ({
+         channel: data.link,
+         title: youtube.title,
+         author: youtube.author, 
+         id: youtube.id,
+         url: youtube.link,
+         createdAt: new Date(youtube.pubDate),
       }))
       const result = results[0];
       if(!this.record || this.record.result.id !== result.id) return this.record = { result, shouldUpdate: true };
@@ -48,7 +43,6 @@ export class Youtube extends BaseService {
 interface YoutubeData {
    channel: string,
    title: string,
-   isNew: boolean
    author: string,
    id: string,
    url: string,
