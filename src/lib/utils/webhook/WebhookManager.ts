@@ -20,7 +20,7 @@ export class WebhookManager {
  
    public async get(id: string | undefined = this.manager.options.webhookId) {
       if(this.webhook) return this.webhook;
-      let webhook = this.store.get(id as string) || [...this.store.values()][0];
+      let webhook = this.store.get(id as string) ?? [...this.store.values()][0];
       if(!webhook) webhook = await this.create(this.manager.options.channelId);
       return this.webhook = webhook;
    }
@@ -36,7 +36,7 @@ export class WebhookManager {
    public async create(channelId: string) {
       const options = await this.rest.post(Routes.channelWebhooks(channelId), {
          body: { name: this.manager.options.name ?? "AutoPoster" },
-         reason: "Generate webhook for automatically sent ssr messages",
+         reason: "Generate webhook for automatically sent ssr contents",
       }) as Types.WebhookOptions;
 
       const webhook = new Webhook(options);
