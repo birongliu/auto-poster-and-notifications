@@ -1,5 +1,4 @@
 import RSS from "rss-parser";
-import { Embed, Utils } from "@lib";
 import { BaseService } from "./BaseService";
 
 interface YoutubeRecord { shouldUpdate: boolean, result: YoutubeData }
@@ -8,7 +7,7 @@ export class Youtube extends BaseService {
    constructor(private channelId: string) {
       super({
          disable: false,
-         timeout: 6000,
+         expireAt: 6000,
          name: "youtube",
       })
       if(!channelId) throw new Error("Missing youtube channelId.")
@@ -33,6 +32,7 @@ export class Youtube extends BaseService {
          url: youtube.link,
          createdAt: new Date(youtube.pubDate),
       }))
+      console.log(results)
       const result = results[0];
       if(!this.record || this.record.result.id !== result.id) return this.record = { result, shouldUpdate: true };
       return this.record = { result, shouldUpdate: false }

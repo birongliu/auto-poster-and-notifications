@@ -15,6 +15,6 @@ export interface WebhookOptions {
 export interface BaseServiceOptions {
    disable: boolean,
    name: string,
-   timeout: number
+   expireAt: number
 }
 

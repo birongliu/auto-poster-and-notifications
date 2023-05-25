@@ -5,7 +5,7 @@ export class Instagram extends BaseService {
       super({
          name: "instagram",
          disable: false,
-         timeout: 3000,
+         expireAt: 3000,
       })
       if(!this.accountName) throw new Error("Required account name")
    }

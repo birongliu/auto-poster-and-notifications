@@ -1,6 +1,6 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v10";
-import { Types, Webhook, AutoPoster, Embed, Utils } from "@lib"
+import { Types, Webhook, AutoPoster, Embed, Utils } from "../../"
 import { container } from "tsyringe"
 
 export class WebhookManager {
@@ -16,6 +16,7 @@ export class WebhookManager {
       if(!this.manager["ready"]) throw new Error("AutoPoster has not be initalized.");
       const webhooks = await this.rest.get(Routes.channelWebhooks(this.manager.options.channelId)) as Webhook[];
       for(const webhook of webhooks) this.store.set(webhook.id, new Webhook(webhook))
+      if(!this.webhook) this.webhook = [...this.store.values()][0]
    }
  
    public async get(id: string | undefined = this.manager.options.webhookId) {
@@ -27,7 +28,7 @@ export class WebhookManager {
 
    public async send(content: Embed[] | Embed | string) {
       const webhook = await this.get();
-      const body = content instanceof Embed ? { embeds: Utils.toArray(content, 10) } : { content }
+      const body = content instanceof Embed ? { embeds: Utils.toArray(content) } : { content }
       return this.rest.post(Routes.webhook(webhook.id, webhook.token), {
          body, reason: "Send auto poster messages",
       })
@@ -41,7 +42,7 @@ export class WebhookManager {
 
       const webhook = new Webhook(options);
       this.store.set(webhook.id, webhook);
-      this.webhook = webhook;
+      if(!this.webhook) this.webhook = webhook;
       return webhook;
    }
 
