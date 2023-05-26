@@ -1,29 +1,33 @@
 import RSS from "rss-parser";
 import { BaseService } from "./BaseService";
 
-interface YoutubeRecord { shouldUpdate: boolean, result: YoutubeData }
-export class Youtube extends BaseService {
-   private record: YoutubeRecord | null = null;
-   constructor(private channelId: string) {
+export class Youtube extends BaseService<{ youtubeId: string }> {
+   private url: string;
+   private lastUpdateItem: YoutubeData[] = [];
+   constructor(metadata: { youtubeId: string }) {
       super({
-         disable: false,
-         expireAt: 6000,
          name: "youtube",
+         expireAt: 100000000000,
+         disable: false,
+         metadata,
       })
-      if(!channelId) throw new Error("Missing youtube channelId.")
+      this.url = `https://www.youtube.com/feeds/videos.xml?channel_id=${this.options.metadata.youtubeId}`;
    }
    public async init() {
-      await this.fetchYoutubeVideo()
+     await this.fetchYoutubeVideo();
    }
+
 
    private async fetchYoutubeVideo() {
-      const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${this.channelId}`;
-      const context = await new RSS().parseURL(feedUrl) as unknown as YoutubeRawData;
-      const resolve = this.resolveData(context);
-      if(resolve.shouldUpdate) return this.webhook.send(`[${resolve.result.title}](${resolve.result.url})`)
+      const context = await new RSS().parseURL(this.url) as YoutubeRawData;
+      const content = this.resolveData(context);
+      if(content.some(element => this.lastUpdateItem.find(e => e.id === element.id))) return true;
+      this.lastUpdateItem.push(...content);
+      this.webhook.send(JSON.stringify(content))
    }
 
-   private resolveData(data: YoutubeRawData): YoutubeRecord {  
+   private resolveData(data: YoutubeRawData): YoutubeData[] {  
+      const now = new Date();
       const results = data.items.map(youtube => ({
          channel: data.link,
          title: youtube.title,
@@ -32,13 +36,9 @@ export class Youtube extends BaseService {
          url: youtube.link,
          createdAt: new Date(youtube.pubDate),
       }))
-      console.log(results)
-      const result = results[0];
-      if(!this.record || this.record.result.id !== result.id) return this.record = { result, shouldUpdate: true };
-      return this.record = { result, shouldUpdate: false }
+      return results.filter(current => current.createdAt.getMilliseconds() < now.getMilliseconds()).slice(0, 5);
    }
 }
-
 
 interface YoutubeData {
    channel: string,

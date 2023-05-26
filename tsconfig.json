@@ -37,7 +37,7 @@
     "experimentalDecorators": true,
 
     /* Types */
-    "types": ["node"],
+    "types": ["node", "jest"],
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "Node",
     /* Module Resolution */

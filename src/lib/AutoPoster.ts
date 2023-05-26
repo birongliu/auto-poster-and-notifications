@@ -11,9 +11,8 @@ export class AutoPoster {
 
    public async init<T extends BaseService>(services: T[] = []) {
       this.ready = true;
-      this.webhook.init();
+      await this.webhook.init();
       container.registerInstance("webhook", this.webhook)
-      this.schedule.init(services)
-      console.log(this.schedule.tasks)
+      await this.schedule.init(services)
    }
 }

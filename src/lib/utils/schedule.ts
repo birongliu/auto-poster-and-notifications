@@ -27,7 +27,7 @@ export class Scheduler {
    
    private async _run() {
       const now = Date.now();
-      const actions = this.tasks.filter(current => new Date(now + current.options.expireAt).getMilliseconds() < now)
+      const actions = this.tasks.filter(current => !current.options.disable && new Date(now + current.options.expireAt).getMilliseconds() < now)
       await Promise.all(actions.map(task => task.init()))
       return this._ensureInterval();
    }

@@ -12,9 +12,10 @@ export interface WebhookOptions {
    token: string,
 }
 
-export interface BaseServiceOptions {
+export interface BaseServiceOptions<T extends object> {
    disable: boolean,
    name: string,
    expireAt: number
+   metadata: T;
 }
 
